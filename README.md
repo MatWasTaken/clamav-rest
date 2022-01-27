@@ -1,57 +1,67 @@
-![Build Status](https://travis-ci.org/niilo/clamav-rest.svg) [![Docker Pulls](https://img.shields.io/docker/pulls/niilo/clamav-rest.svg)]()
+# Clamav Rest
 
-This is two in one docker image so it runs open source virus scanner ClamAV (https://www.clamav.net/), automatic virus definition updates as background process and REST api interface to interact with ClamAV process.
+API REST for ClamAV, in GoLang
 
-Travis CI build will build new release on weekly basis and push those to Docker hub [ClamAV-rest docker image](https://hub.docker.com/r/niilo/clamav-rest/). Virus definitions will be updated on every docker build.
+This API is fork from Niilo's : https://github.com/niilo/clamav-rest that contains a Docker image, The whole docker part was deleted so that we just keep the Go API updated with an installer.
+
+## **Installation** :
+Execute install.sh to install
+
+This script creates and launches a systemctl service "entrypointClamAV.service" that listens to the port 9000 to scan files in input.
+
+## **Usage** :
+
+This API contains 2 functions: A scan that... scans the file you send and a quarantine that uploads the file in a quarantine folder.
+
+### Scan 
+
+To scan a file with this API, here is an example of a cURL call:
+
+`$ curl -i -X POST -F FILES=@./eicar3.com 172.16.1.100:9000/scan`
+
+The API returns : 
+- An http code : 406 if the file is infected, or else 200*.
+- In  JSON the value FOUND is affected to the key "Status" if infected, or OK if not.
+- In JSON in the key "Description", the virus description if the file is infected.
 
 
-## Usage:
+**Infected** :
 
-Run clamav-rest docker image:
-```bash
-docker run -p 9000:9000 --rm -it niilo/clamav-rest
 ```
-
-Test that service detects common test virus signature:
-```bash
-$ curl -i -F "file=@eicar.com.txt" http://localhost:9000/scan
-HTTP/1.1 100 Continue
-
 HTTP/1.1 406 Not Acceptable
 Content-Type: application/json; charset=utf-8
-Date: Mon, 28 Aug 2017 20:22:34 GMT
+Date: Thu, 27 Jan 2022 09:17:50 GMT
 Content-Length: 56
 
-{ Status: "FOUND", Description: "Eicar-Test-Signature" }
+{"Status":"FOUND","Description":"Win.Test.EICAR_HDB-1"}
 ```
+**Safe** :
 
-Test that service returns 200 for clean file:
-```bash
-$ curl -i -F "file=@clamrest.go" http://localhost:9000/scan
-
-HTTP/1.1 100 Continue
-
+```
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Date: Mon, 28 Aug 2017 20:23:16 GMT
+Date: Thu, 27 Jan 2022 12:37:26 GMT
 Content-Length: 33
 
-{ Status: "OK", Description: "" }
+{"Status":"OK","Description":""}
 ```
 
+### Quarantine
+
+This function uploads a file in a quarantine folder :
+
+`$ curl -i -X POST -F FILES=@./eicar3.com 172.16.1.100:9000/update`
+
+The file will be moved to /home/web.app/data.clamav/quarantine/date-of-upload/ entitled with "hour-of-upload(24h format : 15h05)-filename". 
+
+The API returns the header (http code 200 if no error) and "uploaded file:eicar3.com;length:68"
+
+*Different HTTP codes that the scan returns:
+
 **Status codes:**
+
 - 200 - clean file = no KNOWN infections
 - 406 - INFECTED
 - 400 - ClamAV returned general error for file
 - 412 - unable to parse file
 - 501 - unknown request
-
-
-## Developing:
-
-Build golang (linux) binary and docker image:
-```bash
-env GOOS=linux GOARCH=amd64 go build
-docker build . -t niilo/clamav-rest
-docker run -p 9000:9000 --rm -it niilo/clamav-rest
-```
