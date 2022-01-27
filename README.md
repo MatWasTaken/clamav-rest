@@ -2,7 +2,7 @@
 
 API REST for ClamAV, in GoLang
 
-This API is fork from Niilo's : https://github.com/niilo/clamav-rest that contains a Docker image, The whole docker part was deleted so that we just keep the Go API updated with an installer.
+This API is forked from Niilo's : https://github.com/niilo/clamav-rest that contains a Docker image, The whole docker part was deleted so that we just keep the Go API updated with an installer.
 
 ## **Installation** :
 Execute install.sh to install
