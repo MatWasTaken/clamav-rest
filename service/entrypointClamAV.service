@@ -1,0 +1,8 @@
+[Unit]
+Description=scan clamAV
+
+[Service]
+ExecStart=/usr/bin/entrypointClamAV.sh
+
+[Install]
+WantedBy=multi-user.target
