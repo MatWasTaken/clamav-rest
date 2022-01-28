@@ -58,10 +58,12 @@ The API returns the header (http code 200 if no error) and "uploaded file:eicar3
 
 *Different HTTP codes that the scan returns:
 
-**Status codes:**
+**HTTP Status codes:**
 
-- 200 - clean file = no KNOWN infections
-- 406 - INFECTED
-- 400 - ClamAV returned general error for file
-- 412 - unable to parse file
-- 501 - unknown request
+| code HTTP | Description |
+| ------ | ------ |
+| 200 | clean file = no KNOWN infections |
+| 406 | INFECTED |
+| 400 | ClamAV returned general error for file |
+| 412 | unable to parse file |
+| 501 | unknown request |
