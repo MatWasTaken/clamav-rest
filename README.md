@@ -4,12 +4,12 @@ API REST for ClamAV, in GoLang
 
 This API is forked from Niilo's : https://github.com/niilo/clamav-rest that contains a Docker image. The whole docker part was deleted so that we just keep the Go API updated with an installer.
 
-## **Installation** :
+## **Installation**:
 Execute install.sh to install
 
 This script creates and launches a systemctl service "entrypointClamAV.service" that listens to the port 9000 to scan files in input.
 
-## **Usage** :
+## **Usage**:
 
 This API contains 2 functions: A scan that...(drumrolls) scans the file you send and a quarantine that uploads the file in a quarantine folder.
 
@@ -19,13 +19,13 @@ To scan a file with this API, here is an example of a cURL POST request:
 
 `$ curl -i -X POST -F FILES=@./eicar3.com 172.16.1.100:9000/scan`
 
-The API returns : 
+The API returns: 
 - An http code : 406 if the file is infected, or else 200*.
 - In JSON, the value "FOUND" is affected to the key "Status" if infected, or "OK" if not.
 - In JSON, in the key "Description", the virus description if the file is infected.
 
 
-**Infected** :
+**Infected**:
 
 ```
 HTTP/1.1 406 Not Acceptable
@@ -35,7 +35,7 @@ Content-Length: 56
 
 {"Status":"FOUND","Description":"Win.Test.EICAR_HDB-1"}
 ```
-**Safe** :
+**Safe**:
 
 ```
 HTTP/1.1 200 OK
