@@ -60,7 +60,7 @@ The API returns the header (http code 200 if no error) and "uploaded file:eicar3
 
 **HTTP Status codes:**
 
-| code HTTP | Description |
+| HTTP code | Description |
 | ------ | ------ |
 | 200 | clean file = no KNOWN infections |
 | 406 | INFECTED |
