@@ -16,6 +16,7 @@ service clamav-freshclam start
 
 mv ./service/entrypointClamAV.sh /usr/bin/
 chmod +x /usr/bin/entrypointClamAV.sh
+chmod +x /usr/bin/clamav-rest
 mv ./service/entrypointClamAV.service /usr/lib/systemd/system/
 
 systemctl daemon-reload
