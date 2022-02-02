@@ -80,7 +80,7 @@ func UploadHandler(res http.ResponseWriter, req *http.Request) {
 				status = http.StatusInternalServerError
 				return
 			}
-			res.Write([]byte("uploaded file:" + hdr.Filename + ";length:" + strconv.Itoa(int(written)) + "\n"))
+			res.Write([]byte("uploaded file:" + path.Base(hdr.Filename) + ";length:" + strconv.Itoa(int(written)) + "\n"))
 			fmt.Printf(time.Now().Format(time.RFC3339) + " Finished uploading: " + hdr.Filename + " in quarantine" + "\n")
 		}
 	}
