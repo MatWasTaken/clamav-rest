@@ -1,32 +1,31 @@
 # Clamav Rest
 
-API REST pour ClamAV, en GoLang
+API REST for ClamAV, in GoLang
 
-Cette API est un fork de celle de niilo : https://github.com/niilo/clamav-rest qui contient une image docker, toute la partie docker a été retirée pour n'avoir que l'API en go seule.
+This API is forked from Niilo's : https://github.com/niilo/clamav-rest that contains a Docker image. The whole docker part was deleted so that we just keep the Go API updated with an installer.
 
-## **Installation** :
-Pour installer cette API, executer le script install.sh
+## **Installation**:
+Execute install.sh to install
 
-Ce script crée et démarre un service nommé entrypointClamAV.service qui écoutera sur le port 9000 les input de fichier pour les scanner.
+This script creates and launches a systemctl service "entrypointClamAV.service" that listens to the port 9000 to scan files in input.
 
+## **Usage**:
 
-## **Utilisation** :
-
-2 Fonctions sont présentes dans cette API : Le scan de fichier ainsi que la mise en quarantaine.
+This API contains 2 functions: A scan that...(drumrolls) scans the file you send and a quarantine that uploads the file in a quarantine folder.
 
 ### Scan 
 
-Pour scanner un fichier à l'aide de cette API, voici un exemple d'appel cURL:
+To scan a file with this API, here is an example of a cURL POST request:
 
-`$ curl -i -X POST -F FILES=@./eicar3.com http://clamav.atgpedi.net:9000/scan`
+`$ curl -i -X POST -F FILES=@./eicar3.com 172.16.1.100:9000/scan`
 
-L'API renvoi : 
-- Un code http : 406 si le fichier est vérolé, 200 sinon*.
-- En JSON La valeur de la clé "Status" FOUND si vérolé, OK sinon.
-- En JSON La valeur de la clé "Description", la description du virus si détecté.
+The API returns: 
+- An http code : 406 if the file is infected, or else 200*.
+- In JSON, the value "FOUND" is affected to the key "Status" if infected, or "OK" if not.
+- In JSON, in the key "Description", the virus description if the file is infected.
 
 
-**Vérolé** :
+**Infected**:
 
 ```
 HTTP/1.1 406 Not Acceptable
@@ -36,7 +35,7 @@ Content-Length: 56
 
 {"Status":"FOUND","Description":"Win.Test.EICAR_HDB-1"}
 ```
-**Non vérolé** :
+**Safe**:
 
 ```
 HTTP/1.1 200 OK
@@ -47,22 +46,21 @@ Content-Length: 33
 {"Status":"OK","Description":""}
 ```
 
-### Quarantaine
+### Quarantine
 
-Cette fonction permet d'upload un fichier en quarantaine, voici un exemple :
+This function uploads a file in a quarantine folder :
 
-`$ curl -i -X POST -F FILES=@./eicar3.com http://clamav.atgpedi.net:9000/update`
+`$ curl -i -X POST -F FILES=@./eicar3.com 172.16.1.100:9000/update`
 
-Le fichier en question sera déplacé dans le dossier '/home/web.app/data.clamav/quarantine/date-du-jour/' avec comme nom l'heure au format '15:04:05'-nom_du_fichier.
+The file will be moved to /home/web.app/data.clamav/quarantine/date-of-upload/ entitled with "hour-of-upload-filename". (hour of upload : 24h format i.e. 15h05)
 
-L'API renvoi alors le header (code http:200 si pas d'erreur) ainsi que "uploaded file:eicar3.com;length:68".
+The API returns the header (http code 200 if no error) and "uploaded file:eicar3.com;length:68"
 
-
-*Les différents codes HTTP que peut retourner l'API lors d'un scan :
+*Different HTTP codes that the scan returns:
 
 **HTTP Status codes:**
 
-| code HTTP | Description |
+| HTTP code | Description |
 | ------ | ------ |
 | 200 | clean file = no KNOWN infections |
 | 406 | INFECTED |
