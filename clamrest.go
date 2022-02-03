@@ -10,10 +10,10 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
-	"path"
 
 	"clamav-rest/go-clamd"
 )
@@ -173,6 +173,12 @@ func waitForClamD(port string, times int) {
 }
 
 func main() {
+
+	const (
+		PORT     = ":9000"
+		SSL_PORT = ":9443"
+	)
+
 	opts = make(map[string]string)
 
 	for _, e := range os.Environ() {
@@ -206,4 +212,10 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Fatal(http.Serve(l, nil))
+
+	// Start the HTTPS server in a goroutine
+	go http.ListenAndServeTLS(SSL_PORT, "/etc/ssl/clamav-rest/server.crt", "/etc/ssl/clamav-rest/server.key", nil)
+
+	// Start the HTTP server
+	http.ListenAndServe(PORT, nil)
 }
