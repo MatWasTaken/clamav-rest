@@ -29,7 +29,7 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "...running...")
 }
 
@@ -144,6 +144,9 @@ func scanHandler(w http.ResponseWriter, r *http.Request) {
 				// fmt.Fprint(w, respJson)
 				fmt.Printf(time.Now().Format(time.RFC3339)+" Scan result for: %v, %v\n", part.FileName(), s)
 			}
+			if err != nil {
+				log.Fatal(err)
+			}
 			fmt.Printf(time.Now().Format(time.RFC3339) + " Finished scanning: " + part.FileName() + "\n")
 		}
 	default:
@@ -214,7 +217,7 @@ func main() {
 	log.Fatal(http.Serve(l, nil))
 
 	// Start the HTTPS server in a goroutine
-	go http.ListenAndServeTLS(SSL_PORT, "/etc/ssl/clamav-rest/server.crt", "/etc/ssl/clamav-rest/server.key", nil)
+	go http.ListenAndServeTLS(SSL_PORT, "/etc/ssl/clamav-rest/atgpedi.net.cer", "/etc/ssl/clamav-rest/atgpedi.net.key", nil)
 
 	// Start the HTTP server
 	http.ListenAndServe(PORT, nil)
